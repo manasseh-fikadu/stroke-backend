@@ -1,11 +1,24 @@
 import joblib
 from fastapi import FastAPI, Query
-# import sklearn
 import xgboost
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Load the trained model (Replace 'path_to_your_model' with the actual file path)
+# CORS settings to allow requests from your frontend domain (replace 'http://127.0.0.1:5173' with your actual frontend URL)
+origins = [
+    "http://127.0.0.1:5173",
+    # Add more allowed origins here if needed
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 model = joblib.load('xgb-0.95roc.pkl')
 
 @app.get('/')
@@ -25,12 +38,9 @@ def predict_stroke(
         bmi: str = Query(..., description="Body mass index"),
         smoking_status: str = Query(..., description="Smoking status: 0 for unknown, 1 for never smoked, 2 for formerly smoked, 3 for smokes")
 ):
-    # Prepare the input features as a list or array for the model prediction, cast all of them to thier respective types
+
     features = [int(gender), int(age), int(hypertension), int(heart_disease), int(ever_married), int(work_type), int(Residence_type), float(avg_glucose_level), float(bmi), int(smoking_status)]
 
-    # Perform any necessary preprocessing if required (scaling, encoding, etc.)
-
-    # Make predictions using the loaded model
     prediction = model.predict([features])[0]
 
     # Return the prediction result
