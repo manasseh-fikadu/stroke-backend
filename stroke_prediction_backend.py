@@ -35,3 +35,7 @@ def predict_stroke(
 
     # Return the prediction result
     return {"stroke_prediction": bool(prediction)}
+
+@app.get('/send/')
+def send(response):
+    environ['wsgi.input'].write(response)
