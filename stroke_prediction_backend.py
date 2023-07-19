@@ -7,7 +7,7 @@ app = FastAPI()
 
 # CORS settings to allow requests from your frontend domain (replace 'http://127.0.0.1:5173' with your actual frontend URL)
 origins = [
-    "http://127.0.0.1:5173",
+    "*",
     # Add more allowed origins here if needed
 ]
 
