@@ -1,4 +1,4 @@
-import pickle
+import joblib
 from fastapi import FastAPI, Query
 # import sklearn
 import xgboost
