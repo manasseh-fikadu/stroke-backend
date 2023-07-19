@@ -6,7 +6,7 @@ import xgboost
 app = FastAPI()
 
 # Load the trained model (Replace 'path_to_your_model' with the actual file path)
-model = pickle.load(open('xgb-0.95roc.pkl', 'rb'))
+model = joblib.load('xgb-0.95roc.pkl')
 
 @app.get('/')
 def get_home():
