@@ -1,6 +1,6 @@
 import pickle
 from fastapi import FastAPI, Query
-import sklearn
+# import sklearn
 import xgboost
 
 app = FastAPI()
