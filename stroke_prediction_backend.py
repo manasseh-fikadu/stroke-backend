@@ -1,12 +1,23 @@
-import pickle
+import joblib
 from fastapi import FastAPI, Query
-import sklearn
-import xgboost
+from fastapi.middleware.cors import CORSMiddleware
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
 app = FastAPI()
 
-# Load the trained model (Replace 'path_to_your_model' with the actual file path)
-model = pickle.load(open('xgb-0.95roc.pkl', 'rb'))
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+model = joblib.load('xgb-0.95roc.pkl')
 
 @app.get('/')
 def get_home():
@@ -25,13 +36,19 @@ def predict_stroke(
         bmi: str = Query(..., description="Body mass index"),
         smoking_status: str = Query(..., description="Smoking status: 0 for unknown, 1 for never smoked, 2 for formerly smoked, 3 for smokes")
 ):
-    # Prepare the input features as a list or array for the model prediction, cast all of them to thier respective types
+
     features = [int(gender), int(age), int(hypertension), int(heart_disease), int(ever_married), int(work_type), int(Residence_type), float(avg_glucose_level), float(bmi), int(smoking_status)]
+    feature_set = np.array([features]).reshape(1, -1)
 
-    # Perform any necessary preprocessing if required (scaling, encoding, etc.)
+    feature_set = pd.DataFrame(feature_set, columns=['gender', 'age', 'hypertension', 'heart_disease', 'ever_married', 'work_type', 'Residence_type', 'avg_glucose_level', 'bmi', 'smoking_status'])
 
-    # Make predictions using the loaded model
-    prediction = model.predict([features])[0]
+    scaler = StandardScaler()
+    feature_set = scaler.fit_transform(feature_set)
+    print(feature_set)
 
-    # Return the prediction result
-    return {"stroke_prediction": bool(prediction)}
+
+    prediction = model.predict(feature_set)[0]
+    probability = model.predict_proba(feature_set)[0][1]
+    probability = round(probability * 100, 2)
+
+    return {"stroke_prediction": bool(prediction), "probability": float(probability)}
