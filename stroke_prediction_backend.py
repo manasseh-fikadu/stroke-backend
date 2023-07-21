@@ -42,6 +42,8 @@ def predict_stroke(
     features = [int(gender), int(age), int(hypertension), int(heart_disease), int(ever_married), int(work_type), int(Residence_type), float(avg_glucose_level), float(bmi), int(smoking_status)]
 
     prediction = model.predict([features])[0]
+    probability = model.predict_proba([features])[0][1]
+    probability = round(probability * 100, 2)
 
     # Return the prediction result
     return {"stroke_prediction": bool(prediction), "probability": float(probability)}
