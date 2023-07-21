@@ -1,15 +1,13 @@
 import joblib
 from fastapi import FastAPI, Query
-import xgboost
 from fastapi.middleware.cors import CORSMiddleware
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
 app = FastAPI()
 
-# CORS settings to allow requests from your frontend domain (replace 'http://127.0.0.1:5173' with your actual frontend URL)
-origins = [
-    "*",
-    # Add more allowed origins here if needed
-]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -40,14 +38,17 @@ def predict_stroke(
 ):
 
     features = [int(gender), int(age), int(hypertension), int(heart_disease), int(ever_married), int(work_type), int(Residence_type), float(avg_glucose_level), float(bmi), int(smoking_status)]
+    feature_set = np.array([features]).reshape(1, -1)
 
-    prediction = model.predict([features])[0]
-    probability = model.predict_proba([features])[0][1]
+    feature_set = pd.DataFrame(feature_set, columns=['gender', 'age', 'hypertension', 'heart_disease', 'ever_married', 'work_type', 'Residence_type', 'avg_glucose_level', 'bmi', 'smoking_status'])
+
+    scaler = StandardScaler()
+    feature_set = scaler.fit_transform(feature_set)
+    print(feature_set)
+
+
+    prediction = model.predict(feature_set)[0]
+    probability = model.predict_proba(feature_set)[0][1]
     probability = round(probability * 100, 2)
 
-    # Return the prediction result
     return {"stroke_prediction": bool(prediction), "probability": float(probability)}
-    
-@app.get('/send/')
-def send(response):
-    environ['wsgi.input'].write(response)
