@@ -3,4 +3,3 @@ uvicorn[standard]
 gunicorn
 xgboost
 joblib
---upgrade xgboost
