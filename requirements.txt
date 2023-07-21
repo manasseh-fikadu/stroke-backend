@@ -1,5 +1,5 @@
 fastapi
 uvicorn[standard]
 gunicorn
-xgboost
+xgboost1.7.6
 joblib
