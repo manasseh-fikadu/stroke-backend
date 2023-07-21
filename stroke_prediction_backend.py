@@ -44,8 +44,8 @@ def predict_stroke(
     prediction = model.predict([features])[0]
 
     # Return the prediction result
-    return {"stroke_prediction": bool(prediction)}
-
+    return {"stroke_prediction": bool(prediction), "probability": float(probability)}
+    
 @app.get('/send/')
 def send(response):
     environ['wsgi.input'].write(response)
