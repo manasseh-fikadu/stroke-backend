@@ -36,7 +36,7 @@ def predict_stroke(
         bmi: str = Query(..., description="Body mass index"),
         smoking_status: str = Query(..., description="Smoking status: 0 for unknown, 1 for never smoked, 2 for formerly smoked, 3 for smokes")
 ):
-
+    prediction, probability = None
     features = [int(gender), int(age), int(hypertension), int(heart_disease), int(ever_married), int(work_type), int(Residence_type), float(avg_glucose_level), float(bmi), int(smoking_status)]
     feature_set = np.array([features]).reshape(1, -1)
 
