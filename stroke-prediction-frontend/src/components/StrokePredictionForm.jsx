@@ -57,6 +57,7 @@ const StrokePredictionForm = () => {
     smoking_status: "",
   });
   const [prediction, setPrediction] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -68,6 +69,7 @@ const StrokePredictionForm = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const data = {
         ...formData,
@@ -86,9 +88,8 @@ const StrokePredictionForm = () => {
       const response = await axios.get("/predict", {
         params: data,
       });
-      console.log(response.request.responseURL);
       setPrediction(response.data);
-      console.log("Prediction:", response.data);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error while fetching data:", error);
     }
@@ -227,13 +228,17 @@ const StrokePredictionForm = () => {
           />
         </div>
         <div>
-          <button type="submit">Predict</button>
+          <button type="submit"> {isLoading ? "Loading... This is hosted on a free tier, so it may take a moment to load." : "Predict"}</button>
         </div>
       </form>
       {prediction !== null && (
         <div className="result-container">
           <h3>Result:</h3>
-          <p>{prediction.stroke_prediction ? "Stroke predicted. 😷" : "No stroke predicted. 🎆"}</p>
+          <p>
+            {prediction.stroke_prediction
+              ? "Stroke predicted. 😷"
+              : "No stroke predicted. 🎆"}
+          </p>
           <p>Probability: {prediction.probability} %</p>
         </div>
       )}
