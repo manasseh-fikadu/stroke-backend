@@ -17,7 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = joblib.load('xgb-0.95roc.pkl')
+model = joblib.load('best_lgbm_model.pkl')
 
 @app.get('/')
 def get_home():
