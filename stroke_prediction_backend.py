@@ -17,11 +17,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = joblib.load('best_lgbm_model.pkl')
+model = joblib.load('best-model-0.96roc-27.pkl')
+scaler = joblib.load('scaler.pkl')
 
 @app.get('/')
 def get_home():
     return {'message': 'API top level working'}
+
 
 @app.get('/predict/')
 def predict_stroke(
@@ -34,21 +36,27 @@ def predict_stroke(
         Residence_type: str = Query(..., description="Residence type: 0 for rural, 1 for urban"),
         avg_glucose_level: str = Query(..., description="Average glucose level"),
         bmi: str = Query(..., description="Body mass index"),
-        smoking_status: str = Query(..., description="Smoking status: 0 for unknown, 1 for never smoked, 2 for formerly smoked, 3 for smokes")
+        smoking_status: str = Query( ..., description="Smoking status: 0 for unknown, 1 for never smoked, 2 for formerly smoked, 3 for smokes")
 ):
-    prediction, probability, features, feature_set = None, None, None, None
-    features = [int(gender), int(age), int(hypertension), int(heart_disease), int(ever_married), int(work_type), int(Residence_type), float(avg_glucose_level), float(bmi), int(smoking_status)]
+    features, feature_set = None, None
+
+    features = [int(gender), int(age), int(hypertension), int(heart_disease), int(ever_married), int(
+        work_type), int(Residence_type), float(avg_glucose_level), float(bmi), int(smoking_status)]
     feature_set = np.array([features]).reshape(1, -1)
 
-    feature_set = pd.DataFrame(feature_set, columns=['gender', 'age', 'hypertension', 'heart_disease', 'ever_married', 'work_type', 'Residence_type', 'avg_glucose_level', 'bmi', 'smoking_status'])
+    feature_set = pd.DataFrame(feature_set, columns=['gender', 'age', 'hypertension', 'heart_disease',
+                               'ever_married', 'work_type', 'Residence_type', 'avg_glucose_level', 'bmi', 'smoking_status'])
 
-    scaler = StandardScaler()
-    feature_set = scaler.fit_transform(feature_set)
-    print(feature_set)
+    prediction, probability = None, None
 
+    # resampled_ = scaler.fit_transform(resampled)
+    feature_set_scaled = scaler.transform(feature_set)
 
-    prediction = model.predict(feature_set)[0]
-    probability = model.predict_proba(feature_set)[0][1]
+    print(features)
+    print(feature_set_scaled)
+
+    prediction = model.predict(feature_set_scaled)[0]
+    probability = model.predict_proba(feature_set_scaled)[0][1]
     probability = round(probability * 100, 2)
 
     return {"stroke_prediction": bool(prediction), "probability": float(probability)}
