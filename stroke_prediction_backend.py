@@ -17,7 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = joblib.load('best-model-0.96roc-27.pkl')
+model = joblib.load('best-model-0.96roc-78.pkl')
 scaler = joblib.load('scaler.pkl')
 
 @app.get('/')
