@@ -17,8 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = joblib.load('best-model-0.96roc-78.pkl')
-scaler = joblib.load('scaler.pkl')
+model = joblib.load('best-model-0.96roc-41.pkl')
+scaler = joblib.load('scaler1.pkl')
 
 @app.get('/')
 def get_home():
