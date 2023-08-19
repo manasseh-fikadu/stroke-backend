@@ -3,7 +3,6 @@ from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
 
 app = FastAPI()
 
