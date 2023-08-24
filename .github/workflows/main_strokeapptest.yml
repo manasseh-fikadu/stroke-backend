@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'strokeapptest'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_14990A00B4B74C23961B09B921E49B53 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DCE7F566D58F40B5B30C1BA6C20AAF1F }}
